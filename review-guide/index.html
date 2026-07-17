@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Review Guide — CNE Site Build (Jason &amp; Maggie) | SurePath Digital</title>
+  <meta name="description" content="Internal review guide for the CNE review build: what's real, what needs confirmation, measurement hooks, and the production migration path." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="/img/cne-logo-horizontal.png" />
+  <script type="module" crossorigin src="/assets/site-COHl6N4e.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/site-Czdv1ELa.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="review-ribbon">Internal review guide — for Jason &amp; Maggie. Not linked from the public pages.</div>
+
+  <header class="site">
+    <div class="wrap">
+      <a class="logo" href="/" aria-label="CNE review build home">
+        <img src="/img/cne-logo-horizontal.png" alt="CNE Electrical Contractors logo" width="350" height="131" />
+      </a>
+      <nav class="main" aria-label="Main">
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/panel-upgrade-akron/">Panel LP</a></li>
+          <li><a href="/ev-charger-installation/">EV LP</a></li>
+          <li><a href="/hot-tub-pool-electrical/">Hot Tub LP</a></li>
+          <li><a href="/panel-capacity-check/">Capacity Check</a></li>
+          <li><a href="/thank-you/">Thank You</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section data-section="guide">
+      <div class="wrap maxw" style="max-width:820px">
+        <p class="eyebrow">SurePath internal · 2026-07-17</p>
+        <h1 style="font-size:2rem">How to review this build</h1>
+        <p class="lede mt-2">This is the proposed direction for CNE's web presence if Matt says go: an improved homepage plus the four conversion surfaces the campaign needs (panel LP, EV LP, hot tub LP, capacity-check flow, thank-you). It is a working coded build, not a mockup — markup, schema, and measurement hooks are production-grade and liftable 1:1.</p>
+
+        <h2 class="mt-4">What to look at, in order</h2>
+        <ol style="padding-left:22px; display:grid; gap:10px" class="mt-2">
+          <li><strong>Phone paths on your phone.</strong> Every page: sticky call bar at the bottom, tap targets, tel/sms links. Calls are the primary conversion.</li>
+          <li><strong>The capacity-check flow.</strong> /panel-capacity-check/ → submit the form → thank-you page. This is the "get people in the front door" offer from the meeting, built around Matt's existing photo-quoting practice.</li>
+          <li><strong>Price transparency on the panel LP.</strong> $3,500–$4,500 is Matt's own stated range (re-confirmed 7/17: "call it, $4,500"). If he wants it off the page, it lifts out cleanly — but it's the differentiation.</li>
+          <li><strong>The FPE/older-panels section.</strong> Uses only the approved claims-rulebook language (CPSC closed without determining safe; no recall; elevated failure-to-trip in independent testing). No fear copy anywhere.</li>
+          <li><strong>Expectation-setting.</strong> "Most work scheduled within 1–2 weeks" appears deliberately (Matt's real lead time, 7/17) — it pre-frames the EV-buyer impatience problem from the meeting.</li>
+        </ol>
+
+        <h2 class="mt-4">Claims discipline — what this build does NOT say</h2>
+        <ul class="checks mt-2">
+          <li>No 24/7, same-day, or emergency-response promises (unverified — the audit flagged these on the live site)</li>
+          <li>No review counts, star numbers, or testimonials (none invented; "reviews on Google" links out to the real profile search)</li>
+          <li>No competitor pricing claims (the $10k-quote anecdotes stay internal)</li>
+          <li>No license number yet — "Licensed &amp; insured, Ohio" until EL. 48612 is confirmed against the OCILB registry (checklist item)</li>
+          <li>No street address (service-area business posture, consistent with the GBP reverification)</li>
+          <li>No solar anywhere (pilot explicitly negates it)</li>
+          <li>No "family-run" (appears in no source); "locally owned and operated in Tallmadge" is the approved phrasing</li>
+        </ul>
+
+        <h2 class="mt-4">Needs confirmation before production</h2>
+        <ul class="checks mt-2">
+          <li><strong>Matt:</strong> price range on the page (yes/no), permit wording ("coordinated where your county requires it"), 1–2 week scheduling line, hours (three conflicting versions exist today), the SMS number for photo texts (form assumes the main line takes texts), package-price specifics for EV</li>
+          <li><strong>Jason:</strong> whether the capacity-check form posts to FluentForm (exists on the live site) or a serverless endpoint; final GA4 property; CallRail dynamic-number pool</li>
+          <li><strong>License number:</strong> verify EL. 48612 at OCILB, then add to footer + LPs</li>
+        </ul>
+
+        <h2 class="mt-4">Measurement hooks (wired, dormant)</h2>
+        <p class="mt-2">Every page pushes to <code>window.dataLayer</code> — no analytics IDs ship in this build, no network calls fire. Events: <code>page_view_enhanced</code>, <code>call_click</code> (with <code>link_location</code>: topbar/header/hero/meet/footer-cta/callbar), <code>lead_form_submit</code> (form_id, service, zip, contact_pref), <code>section_view</code> (scroll depth by section). Production: point GTM/GA4 at these names — the full conversion spec lives in <code>deliverables/campaign-prep/</code>.</p>
+
+        <h2 class="mt-4">Platform recommendation (short version)</h2>
+        <p class="mt-2"><strong>Improve the existing WordPress site in place on the main domain.</strong> The audit (research/website-audit-2026-07-17.md §9–11) shows the stack is healthy where it counts — current WP core, working cache/CDN, BlogVault backups, AIOSEO Pro with an unconfigured Local Business addon, FluentForm — and the failures are content and configuration, not platform. With SSH now working, these pages port into Elementor/theme templates (or a lean custom template to avoid the 32-stylesheet weight) without touching URLs that matter. All current URLs keep 200 or get 301s per the audit's redirect plan; the three-state decision memo with the full reasoning is in the audit §9.</p>
+
+        <h2 class="mt-4">Files &amp; provenance</h2>
+        <p class="mt-2 small">Source: <code>site/</code> in the private repo (Vite multi-page; <code>npm run build</code>). Copy grounded in: 7/17 meeting Decision Record · keyword package (research/keywords/ — page-to-keyword map + copy angles) · claims rulebook (master plan §6–7) · website audit. Photos are client-owned (live-site panel photo, Matt's ballcap portrait) — no stock, no generated people. This build is deployed on a SurePath review subdomain, noindexed, and is not the live site.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site">
+    <div class="wrap">
+      <div>
+        <span class="footer-logo"><img src="/img/cne-logo-horizontal.png" alt="CNE Electrical Contractors logo" /></span>
+        <p>Review build — SurePath Digital internal.</p>
+      </div>
+      <div>
+        <h3>Pages</h3>
+        <ul>
+          <li><a href="/">Homepage direction</a></li>
+          <li><a href="/panel-upgrade-akron/">Panel upgrade LP</a></li>
+          <li><a href="/ev-charger-installation/">EV charger LP</a></li>
+          <li><a href="/hot-tub-pool-electrical/">Hot tub &amp; pool LP</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Flow</h3>
+        <ul>
+          <li><a href="/panel-capacity-check/">Capacity check</a></li>
+          <li><a href="/thank-you/">Thank-you state</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="wrap footer-legal">
+      <p>SurePath Digital · review surface only</p>
+    </div>
+  </footer>
+
+</body>
+</html>
